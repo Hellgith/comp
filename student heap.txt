@@ -1,0 +1,27 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int main(){
+    vector<int> marks;
+    int n;
+    cout<<"enter the number of students :";
+    cin>>n;
+    for(int i=0;i<n;i++){
+        int mark;
+        cout<<"Enter the marks of "<<i+1<<" student :";
+        cin>>mark;
+        marks.push_back(mark);
+    }
+
+    //max heap
+    make_heap(marks.begin(),marks.end());
+    int max_heap=marks.front();
+    make_heap(marks.begin(),marks.end(),greater<int>());
+    int min_heap=marks.front();
+
+    cout<<"Max_Marks ="<<max_heap<<endl;
+    cout<<"Min_Marks ="<<min_heap<<endl;
+ 
+return 0;
+}

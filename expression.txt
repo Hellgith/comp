@@ -1,0 +1,53 @@
+// B2 Construct an expression tree from the given prefix expression. 
+
+#include <iostream>
+#include <stack>
+#include <cctype>
+using namespace std;
+class node{
+public:
+    char data;
+    node* left;
+    node* right;
+    node(int val){
+        data=val;
+        left = right =NULL;
+    }
+};
+
+node* expfromgivenprefix(string prefix) {
+    stack<node*> st;
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        if (isalnum(prefix[i])) {
+            st.push(new node(prefix[i]));
+        } else {
+            node* root = new node(prefix[i]);
+            root->left = st.top(); st.pop();
+            root->right = st.top(); st.pop();
+            st.push(root);
+        }
+    }
+    return st.top();
+}
+
+
+
+void inorder(node* root){
+    if(!root)return;
+    if(!isalnum(root->data))cout<<"(";
+    inorder(root->left);
+    cout<<root->data<<" ";
+    inorder(root->right); 
+    if(!isalnum(root->data))cout<<")";   
+        
+    
+}
+
+int main(){
+    string expr = "*+AB-CD"; // Example prefix expression
+    node* root = expfromgivenprefix(expr);
+    inorder(root);
+    return 0;
+ 
+return 0;
+}

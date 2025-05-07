@@ -1,0 +1,108 @@
+# Python3 code for inserting element in skip list
+from __future__ import print_function
+import random
+
+class Node(object):
+    """Class to implement node"""
+    def __init__(self, key, level):
+        self.key = key
+        # List to hold references to nodes at different levels
+        self.forward = [None] * (level + 1)
+
+class SkipList(object):
+    """Class for Skip list"""
+    def __init__(self, max_lvl, p):
+        # Maximum level for this skip list
+        self.MAXLVL = max_lvl
+        # P is the fraction of nodes with level i
+        # References also having level i+1
+        self.P = p
+        # Create header node and initialize key to -1
+        self.header = self.createNode(self.MAXLVL, -1)
+        # Current level of skip list
+        self.level = 0
+
+    # Create new node
+    def createNode(self, lvl, key):
+        n = Node(key, lvl)
+        return n
+
+    # Create random level for node
+    def randomLevel(self):
+        lvl = 0
+        while random.random() < self.P and lvl < self.MAXLVL:
+            lvl += 1
+        return lvl
+
+    # Insert given key in skip list
+    def insertElement(self, key):
+        # Create update array and initialize it
+        update = [None] * (self.MAXLVL + 1)
+        current = self.header
+
+        # Start from the highest level of the skip list
+        # Move the current reference forward while the key is greater
+        # than the key of the next node; otherwise, store the current 
+        # node in update and move down a level
+        for i in range(self.level, -1, -1):
+            while current.forward[i] and current.forward[i].key < key:
+                current = current.forward[i]
+            update[i] = current
+        
+        # Move to the next node
+        current = current.forward[0]
+
+        # If the current node is None or the key is not present, insert it
+        if current is None or current.key != key:
+            # Generate a random level for the node
+            rlevel = self.randomLevel()
+
+            # If the generated level is greater than the current level of list
+            if rlevel > self.level:
+                for i in range(self.level + 1, rlevel + 1):
+                    update[i] = self.header
+                self.level = rlevel
+
+            # Create new node with generated random level
+            n = self.createNode(rlevel, key)
+
+            # Insert node by rearranging references
+            for i in range(rlevel + 1):
+                n.forward[i] = update[i].forward[i]
+                update[i].forward[i] = n
+
+            print("Successfully inserted key {}".format(key))
+
+    # Display skip list level wise
+    def displayList(self):
+        print("\n*****Skip List******")
+        head = self.header
+        for lvl in range(self.level + 1):
+            print("Level {}: ".format(lvl), end=" ")
+            node = head.forward[lvl]
+            while node is not None:
+                print(node.key, end=" ")
+                node = node.forward[lvl]
+            print("")
+
+# Driver to test the above code
+def main():
+    lst = SkipList(3, 0.5)
+    lst.insertElement(3)
+    lst.insertElement(6)
+    lst.insertElement(7)
+    lst.insertElement(9)
+    lst.insertElement(12)
+    lst.insertElement(19)
+    lst.insertElement(17)
+    lst.insertElement(26)
+    lst.insertElement(21)
+    lst.insertElement(25)
+    lst.displayList()
+
+main()
+
+# Objective: 
+# To understand the basic concept of Skip List in Data structure. 
+# Outcome: 
+# To implement the Skip list as a better searching over linked list

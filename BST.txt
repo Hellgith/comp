@@ -1,0 +1,98 @@
+
+// B1-Problem Statement: 
+// Beginning with an empty binary search tree, Construct binary search tree by inserting the values in the order given. After constructing a binary tree – 
+// • Insert new node 
+// • Find number of nodes in longest path. 
+// • Minimum data value found in the tree 
+// • Change a tree so that the roles of the left and right pointers are swapped at every node 
+// • Search a value 
+
+
+#include <iostream>
+
+using namespace std;
+class node{
+public:
+    int data;
+    node* left;
+    node* right;
+    node(int val){
+        data =val;
+        left=nullptr;
+        right=nullptr;   
+    }
+};
+node* insert(node* root,int value){
+    if(root==NULL){
+        return new node(value);
+    }
+    if(value < root->data){
+        root->left=insert(root->left,value);
+    }else{
+        root->right=insert(root->right,value);
+    }
+    return root;
+
+}
+int longest(node* root){
+    if(root==NULL)return 0;
+    int left=longest(root->left);
+    int right=longest(root->right);
+    return 1 + max(left,right);
+}
+int min(node* root){
+    if(root==NULL)return -1;
+    while(root->left != NULL){
+        root=root->left;
+    }
+    return root->data;
+}
+
+void swap(node* root){
+    if(root == NULL)return;
+    swap(root->left);
+    swap(root->right);
+    node* temp=root->left;
+    root->left=root->right;
+    root->right=temp;
+}
+
+bool search(node* root,int key){
+    if(root==NULL)return false;
+    if(root->data==key)return true;
+    if(key < root->data){
+        return search(root->left,key);
+    }else{
+        return search(root->right,key);
+    }
+}
+void inorder(node* root){
+    if(root==NULL)return;
+    inorder(root->left);
+    cout<<root->data<<" ";
+    inorder(root->right);
+    
+}
+int main(){
+    int values[] = {50, 30, 70, 20, 40, 60, 80};
+    node* root = NULL;
+
+    for (int i = 0; i < 7; i++)
+        root = insert(root, values[i]);
+
+    root = insert(root, 65);  // Insert new node
+
+    cout << "Inorder: ";
+    inorder(root);
+    cout << "\nLongest Path Nodes: " << longest(root);
+    cout << "\nMinimum Value: " << min(root);
+
+    swap(root);
+    cout << "\nInorder after mirror: ";
+    inorder(root);
+
+    int key = 60;
+    cout << "\nSearch " << key << ": ";
+    cout << (search(root, key) ? "Found" : "Not Found");
+return 0;
+}

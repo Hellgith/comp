@@ -1,0 +1,129 @@
+#include<iostream>
+using namespace std;
+
+// Define a class to represent the graph and perform Prim's algorithm
+class tree {
+    int a[20][20], l, u, w, i, j, v, e, visited[20];
+public:
+    void input();    // Input graph data
+    void display();  // Display adjacency matrix
+    void minimum();  // Apply Prim's algorithm to find Minimum Spanning Tree (MST)
+};
+
+// Function to input graph (branches and connections)
+void tree::input() {
+    cout << "Enter the no. of branches: ";
+    cin >> v;
+
+    // Initialize visited array and adjacency matrix with high value (999 indicates no connection)
+    for (i = 0; i < v; i++) {
+        visited[i] = 0;
+        for (j = 0; j < v; j++) {
+            a[i][j] = 999;  // Initially, no connections
+        }
+    }
+
+    cout << "\nEnter the no. of connections: ";
+    cin >> e;
+
+    // Read all connections and their weights
+    for (i = 0; i < e; i++) {
+        cout << "Enter the end branches of connection (e.g., 1 2): ";
+        cin >> l >> u;
+        cout << "Enter the phone company charges for this connection: ";
+        cin >> w;
+        
+        // Convert 1-based input to 0-based indexing
+        a[l - 1][u - 1] = a[u - 1][l - 1] = w;  // Since it's an undirected graph
+    }
+}
+
+// Function to display the adjacency matrix
+void tree::display() {
+    cout << "\nAdjacency matrix:\n";
+    for (i = 0; i < v; i++) {
+        for (j = 0; j < v; j++) {
+            cout << a[i][j] << "   ";
+        }
+        cout << endl;
+    }
+}
+
+// Function to find Minimum Spanning Tree using Prim's Algorithm
+void tree::minimum() {
+    int p = 0, q = 0, total = 0, min;
+
+    visited[0] = 1; // Start from node 1 (index 0)
+
+    for (int count = 0; count < (v - 1); count++) {
+        min = 999;
+
+        // Find the minimum edge from visited to unvisited node
+        for (i = 0; i < v; i++) {
+            if (visited[i] == 1) {
+                for (j = 0; j < v; j++) {
+                    if (visited[j] != 1 && min > a[i][j]) {
+                        min = a[i][j];
+                        p = i;
+                        q = j;
+                    }
+                }
+            }
+        }
+
+        // If no valid edge is found, we should break out of the loop
+        if (min == 999) {
+            cout << "No valid edge found. The graph may be disconnected.\n";
+            break;
+        }
+
+        // Mark the destination node as visited and add cost
+        visited[q] = 1;  // Only mark q as visited (the node being added to the MST)
+        total += min;
+
+        cout << "Minimum cost connection is " << (p + 1) << " -> " << (q + 1)
+             << " with charge: " << min << endl;
+    }
+
+    cout << "The minimum total cost of connecting all branches is: " << total << endl;
+}
+
+// Main function: Menu-driven interface
+int main() {
+    int ch;
+    tree t;
+
+    do {
+        cout << "\n========== PRIM'S ALGORITHM ==========\n";
+        cout << "1. INPUT\n2. DISPLAY\n3. MINIMUM\n4. EXIT\n";
+        cout << "Enter your choice: ";
+        cin >> ch;
+
+        switch (ch) {
+        case 1:
+            cout << "******* INPUT YOUR VALUES *******\n";
+            t.input();
+            break;
+
+        case 2:
+            cout << "******* DISPLAY THE CONTENTS *******\n";
+            t.display();
+            break;
+
+        case 3:
+            cout << "********* MINIMUM *********\n";
+            t.minimum();
+            break;
+
+        case 4:
+            cout << "Exiting the program. Thank you!\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+
+    } while (ch != 4); // Exit when choice is 4
+
+    return 0;
+}

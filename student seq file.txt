@@ -1,0 +1,34 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+int main(){
+    int roll;
+    string name;
+    int choice;
+ 
+    do{
+        cout<<"\n1.Add student\n2.Show Detail\n3.Exit\nEnter choice :";
+        cin>>choice;
+        if(choice==1){
+            ofstream out("student.txt",ios::app);
+            cout<<"Enter the name of studnet :";
+            cin>>name;
+            cout<<"Enter the roll number of studnet :";
+            cin>>roll;
+            out<< name<< "  "<< roll<<endl;
+            out.close();       
+
+        }
+        if(choice ==2){
+            ifstream in("student.txt");
+            while(in >> name >> roll ){
+                cout<< "Name :"<<name <<"ROllno :"<<roll<<endl;
+            }
+            in.close();
+        }
+
+
+    }while(choice !=3 );
+ 
+return 0;
+}

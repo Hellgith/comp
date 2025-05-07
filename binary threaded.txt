@@ -1,0 +1,86 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for the binary tree
+struct Node {
+    int data;
+    Node *left, *right;
+    bool isThreaded; // Indicates if right pointer is a thread
+
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+        isThreaded = false;
+    }
+};
+
+// Function to create threaded binary tree
+void createThreaded(Node* root, Node*& prev) {
+    if (root == nullptr) return;
+
+    // Recursive call for left subtree
+    createThreaded(root->left, prev);
+
+    // Process current node
+    if (prev && prev->right == nullptr) {
+        prev->right = root; // Link right pointer to inorder successor
+        prev->isThreaded = true;
+    }
+    prev = root;
+
+    // Recursive call for right subtree
+    createThreaded(root->right, prev);
+}
+
+// Utility function to convert tree to threaded binary tree
+void convertToThreaded(Node* root) {
+    Node* prev = nullptr;
+    createThreaded(root, prev);
+}
+
+// Function to perform inorder traversal using threading
+void inorderTraversal(Node* root) {
+    Node* curr = root;
+    
+    // Move to the leftmost node
+    while (curr && curr->left)
+        curr = curr->left;
+
+    // Traverse the tree using threaded links
+    while (curr) {
+        cout << curr->data << " ";
+        
+        // If the node is threaded, move to its inorder successor
+        if (curr->isThreaded)
+            curr = curr->right;
+        else {
+            // Otherwise, move to the leftmost node in right subtree
+            curr = curr->right;
+            while (curr && curr->left)
+                curr = curr->left;
+        }
+    }
+}
+
+// Driver function to test the implementation
+int main() {
+    Node* root = new Node(10);
+    root->left = new Node(5);
+    root->right = new Node(20);
+    root->right->left = new Node(15);
+    root->right->right = new Node(25);
+
+    // Convert binary tree to threaded binary tree
+    convertToThreaded(root);
+
+    cout << "Inorder traversal using threading: ";
+    inorderTraversal(root);
+    
+    return 0;
+}
+
+
+// To understand the basic concept of Non Linear Data Structure “threaded binary tree ” and its 
+// use in Data structure. 
+// Outcome: 
+// To convert the Binary Tree into threaded binary tree and analyze its time and spaces

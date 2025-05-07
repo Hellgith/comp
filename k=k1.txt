@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+class obst {
+    int a[10], r[10][10], n;
+    float p[10], q[10], w[10][10], c[10][10];
+
+public:
+    void accept();
+    void cons_obst();
+    int find_min(int, int);
+    void tree(int i, int j);
+};
+
+void obst::accept() {
+    int i;
+    cout << "\nHow many keys are there in the OBST? ";
+    cin >> n;
+
+    cout << "\nEnter " << n << " keys (in sorted order): ";
+    for (i = 1; i <= n; i++)
+        cin >> a[i];
+
+    cout << "\nEnter " << n << " successful search probabilities (p[i]): ";
+    for (i = 1; i <= n; i++)
+        cin >> p[i];
+
+    cout << "\nEnter " << n + 1 << " unsuccessful search probabilities (q[i]): ";
+    for (i = 0; i <= n; i++)
+        cin >> q[i];
+}
+
+void obst::cons_obst() {
+    int i, j, k, m;
+
+    // Initialize cost, root, and weight matrices for cases where subtree size is 0 or 1
+    for (i = 0; i < n; i++) {
+        w[i][i] = q[i];
+        c[i][i] = r[i][i] = 0;
+
+        w[i][i + 1] = q[i] + p[i + 1] + q[i + 1];
+        c[i][i + 1] = w[i][i + 1];
+        r[i][i + 1] = i + 1;
+    }
+
+    // Initialize for last dummy node
+    w[n][n] = q[n];
+    c[n][n] = r[n][n] = 0;
+
+    // Fill matrices for subtree sizes from 2 to n
+    for (m = 2; m <= n; m++) {
+        for (i = 0; i <= n - m; i++) {
+            j = i + m;
+            w[i][j] = w[i][j - 1] + p[j] + q[j];
+            k = find_min(i, j);  // Find optimal root
+            c[i][j] = w[i][j] + c[i][k - 1] + c[k][j];
+            r[i][j] = k;
+        }
+    }
+
+    cout << "\n============================";
+    cout << "\nOptimal Binary Search Tree";
+    cout << "\n============================\n";
+    cout << "Root of OBST: " << a[r[0][n]] << endl;
+    cout << "\nConstructed Tree Structure:";
+    cout << "\n----------------------------\n";
+    cout << "Left child of " << a[r[0][n]] << ": ";
+    tree(0, r[0][n] - 1);
+    cout << "Right child of " << a[r[0][n]] << ": ";
+    tree(r[0][n], n);
+}
+
+int obst::find_min(int i, int j) {
+    int min = 9999, k, z = 0;
+
+    // Find root 'k' in range to minimize cost
+    for (k = r[i][j - 1]; k <= r[i + 1][j]; k++) {
+        if ((c[i][k - 1] + c[k][j]) < min) {
+            min = c[i][k - 1] + c[k][j];
+            z = k;
+        }
+    }
+    return z;
+}
+
+void obst::tree(int i, int j) {
+    if (r[i][j] == 0) {
+        cout << "NULL\n";
+        return;
+    }
+
+    cout << a[r[i][j]] << endl;
+
+    cout << "  Left child of " << a[r[i][j]] << ": ";
+    tree(i, r[i][j] - 1);
+
+    cout << "  Right child of " << a[r[i][j]] << ": ";
+    tree(r[i][j], j);
+}
+
+int main() {
+    obst o;
+    o.accept();
+    o.cons_obst();
+    return 0;
+}
+
+// Objective: 
+// To understand the concept and basic of OBST in Data structure. 
+// Outcome: 
+// To implement the basic concept of OBST tree and to perform basic operation insert, 
+// search and delete an element in OBST tree also able to apply correct rotation when tree is 
+// unbalance after insertion and deletion operation in Data structure.
+
+
+// An optimal binary search tree is a binary search tree for which the nodes are arranged on levels 
+// such that the tree cost is minimum. For the purpose of a better presentation of optimal binary 
+// search trees, we will consider “extended binary search trees”, which have the keys stored at their 
+// internal nodes
+
+// If the user searches a particular key in the tree,2 cases can occur: 
+// 1  the key is found, so the corresponding weight p is incremented; 
+// 2  the key is not found, so the corresponding q value is incremented. 

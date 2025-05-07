@@ -1,0 +1,27 @@
+# A1-Problem Statement: 
+# Consider telephone book database of N clients. Make use of a hash table implementation to quickly look up client‘s telephone number.
+
+telephonebook={}
+
+def add(name,number):
+    telephonebook[name]=number;
+    print(f"{name}Added successfully !")
+    
+def search(name):
+    if(name in telephonebook):
+       print(f"{name}'s number is: {telephonebook[name]}")
+    else:
+        print(f"{name} name not found !")
+
+def display():
+    print("......Telephone Book......")
+    for name,number in telephonebook.items():
+        print(f"{name}:{number}")
+        
+add("Yog","7666156509")
+add("omkar","34223423423")
+add("sahil","65464646466")
+
+search("Yog")
+search("atharva")
+display()

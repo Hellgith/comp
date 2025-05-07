@@ -1,0 +1,139 @@
+#include<iostream>
+#include<stdlib.h>
+using namespace std;
+
+struct node {
+    string vertex;
+    int time;
+    node *next;
+};
+
+class adjmatlist {
+    int m[20][20], n;
+    string v[20];
+    node *head[20];
+
+public:
+    adjmatlist() {
+        for (int i = 0; i < 20; i++) {
+            head[i] = NULL;
+        }
+    }
+
+    void getgraph();
+    void adjlist();
+    void displaym();
+    void displaya();
+};
+
+void adjmatlist::getgraph() {
+    char ch;
+    cout << "\nEnter number of cities (max 20): ";
+    cin >> n;
+
+    cout << "Enter names of the cities:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> v[i];
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << "\nIs there a path from " << v[i] << " to " << v[j] << "? (y/n): ";
+            cin >> ch;
+            if (ch == 'y' || ch == 'Y') {
+                cout << "Enter time (in minutes) to travel from " << v[i] << " to " << v[j] << ": ";
+                cin >> m[i][j];
+            } else {
+                m[i][j] = 0;
+            }
+        }
+    }
+
+    adjlist();
+}
+
+void adjmatlist::adjlist() {
+    for (int i = 0; i < n; i++) {
+        // Create head node for each city
+        node *p = new node;
+        p->vertex = v[i];
+        p->time = 0; // Not needed for head, but initializing
+        p->next = NULL;
+        head[i] = p;
+
+        node *last = head[i];
+
+        // Create nodes for all connected cities
+        for (int j = 0; j < n; j++) {
+            if (m[i][j] != 0) {
+                node *q = new node;
+                q->vertex = v[j];
+                q->time = m[i][j];
+                q->next = NULL;
+                last->next = q;
+                last = q;
+            }
+        }
+    }
+}
+
+void adjmatlist::displaym() {
+    cout << "\nAdjacency Matrix:\n\t";
+    for (int j = 0; j < n; j++) {
+        cout << v[j] << "\t";
+    }
+    for (int i = 0; i < n; i++) {
+        cout << "\n" << v[i] << "\t";
+        for (int j = 0; j < n; j++) {
+            cout << m[i][j] << "\t";
+        }
+    }
+    cout << endl;
+}
+
+void adjmatlist::displaya() {
+    cout << "\nAdjacency List:\n";
+    for (int i = 0; i < n; i++) {
+        node *temp = head[i];
+        cout << temp->vertex;
+        temp = temp->next;
+        while (temp != NULL) {
+            cout << " -> " << temp->vertex << " [Time: " << temp->time << " min]";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int choice;
+    adjmatlist a;
+
+    while (true) {
+        cout << "\nMenu:\n";
+        cout << "1. Enter Graph\n";
+        cout << "2. Display Adjacency Matrix\n";
+        cout << "3. Display Adjacency List\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                a.getgraph();
+                break;
+            case 2:
+                a.displaym();
+                break;
+            case 3:
+                a.displaya();
+                break;
+            case 4:
+                exit(0);
+            default:
+                cout << "Unknown choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
